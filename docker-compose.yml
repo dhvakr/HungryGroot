@@ -1,0 +1,43 @@
+version: '3.9'
+# HG refers Hungry Groot
+services:
+  hg:
+    container_name: "hg"
+    build: .
+    image: hg:4.5.0
+    environment:
+      DATASOURCE_URL: jdbc:postgresql://hg-postgres:5432/hungry_groot
+      DATASOURCE_USERNAME: hgAdmin
+      DATASOURCE_PASSWORD: hgAdmin@45
+    links:
+      - hg-postgres
+    ports:
+      - "8073:8073"
+  hg-postgres:
+    container_name: "hg-postgres"
+    image: postgres:13.1-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: hungry_groot
+      POSTGRES_USER: hgAdmin
+      POSTGRES_PASSWORD: hgAdmin@45
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    expose:
+      - "5433"
+  hg-pgadmin:
+    container_name: "hg-pgadmin"
+    image: dpage/pgadmin4:7.1
+    environment:
+      PGADMIN_DEFAULT_EMAIL: hg@dhvakr.me
+      PGADMIN_DEFAULT_PASSWORD: hgAdmin@45
+      PGADMIN_LISTEN_PORT: 5050
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:5050"
+volumes:
+  pg-data:
+  pgadmin-data:
